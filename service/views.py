@@ -10,10 +10,17 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from sendsms import api
 from sendsms.message import SmsMessage
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 def base(request):
     return render(request, 'base.html')
+
+#@staff_member_required
+def adminpage(request):
+    summary = request.session['summary']
+    address = request.session['address']
+    return render(request, 'admin.html', {'summary':summary, 'address':address})
 
 
 def home(request):
@@ -40,11 +47,16 @@ def parcel(request):
 
 
 def booking(request):
-    return render(request, 'booking.html')
+    fm=OrderDetails.objects.all()
+    return render(request, 'booking.html',{'form':fm})
 
 
 def tracking(request):
     return render(request, 'tracking.html')
+
+def history(request):
+    fm = OrderDetails.objects.all()
+    return render(request, "history.html", {'form':fm})
 
 
 def profiles(request):
@@ -57,6 +69,8 @@ def order_summary(request):
     summary = request.session['summary']
     print(summary)
     return render(request, 'order_summary.html', {'summary': summary})
+
+
 
 
 def payment_details(request):
@@ -119,15 +133,15 @@ def success(request):
         drivers_emails.append(i.email)
         drivers_phones.append(i.phone_no)
         print(i.phone_no)
-    # send_mail(
-    #     'sending mail regarding new order',
-    #     f"new order has came please accept and pickup the parcel from {request.session['address']['pickup_area']} and deliver"
-    #     f"to area = {request.session['address']['delivery_area']} , location = {request.session['address']['delivery_location']},"
-    #     f"pincode= {request.session['address']['delivery_pincode']}",
-    #     'ravindrareddy72868@gmail.com',
-    #     drivers_emails,
-    #     fail_silently=False,
-    # )
+    send_mail(
+        'sending mail regarding new order',
+        f"new order has came please accept and pickup the parcel from {request.session['address']['pickup_area']} and deliver"
+        f"to area = {request.session['address']['delivery_area']} , location = {request.session['address']['delivery_location']},"
+        f"pincode= {request.session['address']['delivery_pincode']}",
+        'ravindrareddy72868@gmail.com',
+        drivers_emails,
+        fail_silently=False,
+    )
     message = SmsMessage(body="message sended",
         from_phone='9966244167',
         to='7286853993')

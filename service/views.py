@@ -217,7 +217,6 @@ def address_enter(request):
                                 'dstate': daddress['state']}
             request.session['address']['delivery'] = delivery_context
         if 'address' in request.session:
-            print(request.session['ppincode'], 'yes--')
             request.session.modified = True
             if 'pickup' in request.session['address'] and 'delivery' in request.session['address']:
                 pickup = request.session['address']['pickup']
@@ -250,11 +249,11 @@ def address_enter(request):
 
 
 def payment_options(request):
-    # if request.method == 'POST':
-    #     amount  = 50000
-    #     order_currency = 'INR'
-    #     client = razorpay.Client(auth=('rzp_test_6lrPUDLV0dRFf9', 'OjNBfOuoD0M8yl3Gkeo9YuJK'))
-    #     payment = client.order.create({'amount': amount, 'currency': 'INR', 'payment_capture': '1'})
+    if request.method == 'POST':
+        amount  = 50000
+        order_currency = 'INR'
+        client = razorpay.Client(auth=('rzp_test_6lrPUDLV0dRFf9', 'OjNBfOuoD0M8yl3Gkeo9YuJK'))
+        payment = client.order.create({'amount': amount, 'currency': 'INR', 'payment_capture': '1'})
     price = request.session['price']
     delivery_address = ' '
     delivery_address += request.session['address']['delivery']['dcity'] + ' ,'
@@ -362,3 +361,7 @@ def admin_dashboard(request):
         if i.email == request.session["driver"]:
             driver = i
     return render(request, 'admin_dashboard.html', {'page_obj': page_obj, 'driver': driver, 'total': total_orders})
+
+
+def first(request):
+    return render(request,'first.html')
